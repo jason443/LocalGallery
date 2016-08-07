@@ -1,10 +1,12 @@
 package com.jason.localgallery.util;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
 
 /**
  * Created by jason on 2016/8/4.
+ *
  */
 public class BitmapCacheMaker {
 
@@ -34,10 +36,18 @@ public class BitmapCacheMaker {
         return instance;
     }
 
+    /** 从缓存中取出数据
+     * @param key
+     * @return
+     */
     public Bitmap getBitmapFromLruCache(String key) {
         return mLruCacheBitmap.get(key);
     }
 
+    /** 将数据增加进缓存
+     * @param key
+     * @param value
+     */
     public void addBitmapToLruCache(String key, Bitmap value) {
         if (getBitmapFromLruCache(key) == null) {
             mLruCacheBitmap.put(key, value);

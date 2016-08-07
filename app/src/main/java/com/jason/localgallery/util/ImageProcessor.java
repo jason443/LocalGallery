@@ -15,23 +15,21 @@ import java.io.InputStream;
 /**
  * Created by jason on 2016/8/4.
  */
-public class PictureProcessor {
+public class ImageProcessor {
 
-    public static Bitmap compressBitmapFromStream(InputStream is, int reqWidth, int reqHeight) {
+    public Bitmap compressBitmapFromBytes(byte[] bytes, int reqWith, int reqHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
-        Log.d("Main2", BitmapFactory.decodeStream(is).getByteCount() + "?");
-        Log.d("Main3", BitmapFactory.decodeStream(is, null, options).getByteCount() + "?");
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(is, null, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+        options.inSampleSize = calculateInSampleSize(options, reqWith, reqHeight);
         options.inJustDecodeBounds = false;
         options.inPreferredConfig = Bitmap.Config.RGB_565;
-        Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
-        Log.d("Main4", bitmap.getByteCount() + "?");
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        bitmap = compressBitmapFromBitmap(bitmap);
         return bitmap;
     }
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         if (reqHeight == 0 || reqWidth == 0) {
             return 1;
         }
@@ -52,18 +50,17 @@ public class PictureProcessor {
         return inSampleSize;
     }
 
-    public static Bitmap compressBitmapFromBitmap(Bitmap image) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Log.d("Main1", image.getByteCount() + "");
-        image.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-        try {
-            baos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public Bitmap compressBitmapFromBitmap(Bitmap image) {
+        ByteArrayOutputStream baoStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baoStream);
+        int options = 100;
+        while (baoStream.toByteArray().length / 1024 > 32) {
+            baoStream.reset();
+            options -= 10;
+            image.compress(Bitmap.CompressFormat.JPEG, options, baoStream);
         }
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        Bitmap bitmap = BitmapFactory.decodeStream(bais);
-        Log.d("Main1", bitmap.getByteCount() + "");
+        ByteArrayInputStream baiStream = new ByteArrayInputStream(baoStream.toByteArray());
+        Bitmap bitmap = BitmapFactory.decodeStream(baiStream);
         return bitmap;
     }
 

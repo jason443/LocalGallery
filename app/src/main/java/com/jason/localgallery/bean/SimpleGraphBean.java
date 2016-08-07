@@ -1,7 +1,5 @@
 package com.jason.localgallery.bean;
 
-import android.graphics.Bitmap;
-
 /**
  * Created by jason on 2016/8/4.
  */

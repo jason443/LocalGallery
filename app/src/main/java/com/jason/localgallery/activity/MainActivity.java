@@ -113,12 +113,18 @@ public class MainActivity extends Activity {
         initView();
     }
 
+    /**
+     * 初始化控件
+     */
     public void initView() {
         mGridView = (GridView) findViewById(R.id.main_gv_simple_graph);
-        mGridViewAdapter = new SimpleGridViewAdapter(mGraphBeanLists, this);
+        mGridViewAdapter = new SimpleGridViewAdapter(mGraphBeanLists, this, mGridView);
         mGridView.setAdapter(mGridViewAdapter);
     }
 
+    /**
+     * 初始化数据
+     */
     public void initData() {
         mGraphBeanLists = new ArrayList<>();
         for(String url : mImageUrl) {
