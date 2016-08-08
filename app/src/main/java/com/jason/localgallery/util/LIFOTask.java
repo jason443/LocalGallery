@@ -14,11 +14,9 @@ public class LIFOTask extends FutureTask<Bitmap> implements Comparable<LIFOTask>
 
     private static long counter = 0;
     private long priority;
-    public Callable<Bitmap> mCallable;
 
     public LIFOTask(Callable<Bitmap> callable) {
         super(callable);
-        mCallable = callable;
         priority = counter++;
     }
 
