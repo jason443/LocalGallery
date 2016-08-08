@@ -7,10 +7,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.widget.GridView;
 import android.widget.ImageView;
-
 import com.jason.localgallery.bean.UIHandlerBean;
 import com.jason.localgallery.bean.TaskHandlerBean;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,7 +45,7 @@ public class ImageLoader {
         HandlerThread handlerThread = new HandlerThread("download");
         handlerThread.start();
         mTaskHandler = new TaskHandler(handlerThread.getLooper());
-        mUIHandler = new UIHandler();
+        mUIHandler = new UIHandler(this);
         mTasks = new HashMap<>();
         mGridView = gridView;
         mUrls = urls;
@@ -194,17 +192,24 @@ public class ImageLoader {
         }
     }
 
-    class UIHandler extends Handler {
+    static class UIHandler extends Handler {
+
+        private ImageLoader mImageLoader;
+
+        public UIHandler(ImageLoader imageLoader) {
+            super();
+            mImageLoader = imageLoader;
+        }
 
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case FINISH_RESPONSE:
                     UIHandlerBean handlerBean = (UIHandlerBean) msg.obj;
-                    mTasks.remove(handlerBean.getIndex());
+                    mImageLoader.mTasks.remove(handlerBean.getIndex());
                     Bitmap bitmap = handlerBean.getBitmap();
                     String url = handlerBean.getUrl();
-                    ImageView imageView = (ImageView) mGridView.findViewWithTag(url);
+                    ImageView imageView = (ImageView) mImageLoader.mGridView.findViewWithTag(url);
                     if (imageView!= null && bitmap != null) {
                         imageView.setImageBitmap(bitmap);
                     }

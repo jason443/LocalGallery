@@ -1,6 +1,8 @@
 package com.jason.localgallery.util;
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -20,7 +22,7 @@ public class LIFOTask extends FutureTask<Bitmap> implements Comparable<LIFOTask>
         priority = counter++;
     }
 
-    public int compareTo(LIFOTask task) {
+    public int compareTo(@NonNull LIFOTask task) {
         return priority > task.priority ? -1 : 1;
     }
 
