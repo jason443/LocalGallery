@@ -8,6 +8,7 @@ import com.jason.localgallery.R;
 import com.jason.localgallery.adapter.SimpleGridViewAdapter;
 import com.jason.localgallery.bean.SimpleGraphBean;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,8 +103,6 @@ public class MainActivity extends Activity {
     };
 
     private List<SimpleGraphBean> mGraphBeanLists;
-    private GridView mGridView;
-    private SimpleGridViewAdapter mGridViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,9 +116,12 @@ public class MainActivity extends Activity {
      * 初始化控件
      */
     public void initView() {
-        mGridView = (GridView) findViewById(R.id.main_gv_simple_graph);
-        mGridViewAdapter = new SimpleGridViewAdapter(mGraphBeanLists, this, mGridView);
-        mGridView.setAdapter(mGridViewAdapter);
+        GridView gridView = (GridView) findViewById(R.id.main_gv_simple_graph);
+        WeakReference<MainActivity> weakReference = new WeakReference<>(this);
+        SimpleGridViewAdapter gridViewAdapter = new SimpleGridViewAdapter(mGraphBeanLists,
+                weakReference.get(), gridView);
+        gridView.setAdapter(gridViewAdapter);
+        gridView.setOnScrollListener(gridViewAdapter);
     }
 
     /**

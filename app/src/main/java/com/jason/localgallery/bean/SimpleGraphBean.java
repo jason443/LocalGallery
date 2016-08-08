@@ -2,6 +2,7 @@ package com.jason.localgallery.bean;
 
 /**
  * Created by jason on 2016/8/4.
+ *
  */
 public class SimpleGraphBean {
 
@@ -14,8 +15,5 @@ public class SimpleGraphBean {
     public String getBitmapUrl() {
         return bitmapUrl;
     }
-
-    public void setBitmapUrl(String bitmapUrl) {
-        this.bitmapUrl = bitmapUrl;
-    }
 }
+

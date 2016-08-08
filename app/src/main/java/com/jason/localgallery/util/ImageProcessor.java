@@ -1,22 +1,23 @@
 package com.jason.localgallery.util;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
-import android.util.Log;
-
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by jason on 2016/8/4.
+ *
  */
 public class ImageProcessor {
 
+    /**
+     * 通过传进来的字节数组压缩图片
+     * @param bytes Bitmap的字符数组
+     * @param reqWith 压缩后的宽度
+     * @param reqHeight 压缩后的高度
+     * @return 压缩后的图片
+     */
     public Bitmap compressBitmapFromBytes(byte[] bytes, int reqWith, int reqHeight) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -29,6 +30,13 @@ public class ImageProcessor {
         return bitmap;
     }
 
+    /**
+     * 计算采样率
+     * @param options 保存着原图片的高和宽
+     * @param reqWidth 压缩后的宽
+     * @param reqHeight 压缩后的高
+     * @return 计算出来的采样率
+     */
     public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         if (reqHeight == 0 || reqWidth == 0) {
             return 1;
@@ -50,6 +58,10 @@ public class ImageProcessor {
         return inSampleSize;
     }
 
+    /** 从质量压缩bitmap
+     * @param image 压缩前的Bitmap
+     * @return 压缩后的Bitmap
+     */
     public Bitmap compressBitmapFromBitmap(Bitmap image) {
         ByteArrayOutputStream baoStream = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baoStream);
@@ -60,8 +72,7 @@ public class ImageProcessor {
             image.compress(Bitmap.CompressFormat.JPEG, options, baoStream);
         }
         ByteArrayInputStream baiStream = new ByteArrayInputStream(baoStream.toByteArray());
-        Bitmap bitmap = BitmapFactory.decodeStream(baiStream);
-        return bitmap;
+        return BitmapFactory.decodeStream(baiStream);
     }
 
 }

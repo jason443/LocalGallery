@@ -5,11 +5,11 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.jason.localgallery.R;
 import com.jason.localgallery.bean.SimpleGraphBean;
@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  * Created by jason on 2016/8/4.
+ *
  */
 public class SimpleGridViewAdapter extends BaseAdapter implements AbsListView.OnScrollListener {
 
@@ -28,19 +29,19 @@ public class SimpleGridViewAdapter extends BaseAdapter implements AbsListView.On
     private LayoutInflater mInflater;
     private int mStartItem;
     private int mEndItem;
-    private List<String> mUrls;
     private ImageLoader mImageLoader;
     private boolean flags = true;
+    private Context mContext;
 
     public SimpleGridViewAdapter(List<SimpleGraphBean> data, Context context, GridView gridView) {
         mSimpleGraphBeans = data;
         mInflater = LayoutInflater.from(context);
-        mUrls = new ArrayList<>();
+        mContext = context;
+        List<String> mUrls = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             mUrls.add(mSimpleGraphBeans.get(i).getBitmapUrl());
         }
-        mImageLoader = new ImageLoader(mUrls, gridView);
-        gridView.setOnScrollListener(this);
+        mImageLoader = ImageLoader.getInstance(gridView, mUrls);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class SimpleGridViewAdapter extends BaseAdapter implements AbsListView.On
         SimpleGraphBean simpleGraphBean = (SimpleGraphBean) getItem(position);
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.main_gv_item, null);
+            convertView = mInflater.inflate(R.layout.main_gv_item, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.mIvShowGraph = (ImageView) convertView.findViewById(R.id.item_iv_show);
             convertView.setTag(viewHolder);
@@ -97,8 +98,11 @@ public class SimpleGridViewAdapter extends BaseAdapter implements AbsListView.On
         mStartItem = firstVisibleItem;
         mEndItem = firstVisibleItem + visibleItemCount;
         if (flags && visibleItemCount > 0) { //第一次启动预加载
-            mImageLoader.loadImages(mStartItem, mEndItem);
+            mImageLoader.loadImages(mStartItem,mEndItem);
             flags = false;
+        }
+        if (firstVisibleItem + visibleItemCount == totalItemCount) {
+            Toast.makeText(mContext,"已经没有更多图片了", Toast.LENGTH_SHORT).show();
         }
     }
 
