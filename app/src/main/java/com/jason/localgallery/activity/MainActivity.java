@@ -1,11 +1,15 @@
 package com.jason.localgallery.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.jason.localgallery.R;
 import com.jason.localgallery.adapter.SimpleGridViewAdapter;
+import com.jason.localgallery.application.CustomApplication;
 import com.jason.localgallery.bean.SimpleGraphBean;
 
 import java.lang.ref.WeakReference;
@@ -14,7 +18,7 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private String[] mImageUrl = {
+    private String[] mImageUrls = {
             "http://img.my.csdn.net/uploads/201407/26/1406383299_1976.jpg",
             "http://img.my.csdn.net/uploads/201407/26/1406383291_6518.jpg",
             "http://img.my.csdn.net/uploads/201407/26/1406383291_8239.jpg",
@@ -108,6 +112,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initApplication();
         initData();
         initView();
     }
@@ -122,6 +127,14 @@ public class MainActivity extends Activity {
                 weakReference.get(), gridView);
         gridView.setAdapter(gridViewAdapter);
         gridView.setOnScrollListener(gridViewAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, LargeImageActivity.class);
+                intent.putExtra("index", position);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -129,9 +142,15 @@ public class MainActivity extends Activity {
      */
     public void initData() {
         mGraphBeanLists = new ArrayList<>();
-        for(String url : mImageUrl) {
+        for (String url : mImageUrls) {
             SimpleGraphBean simpleGraphBean = new SimpleGraphBean(url);
             mGraphBeanLists.add(simpleGraphBean);
         }
     }
+
+    public void initApplication() {
+        CustomApplication application = (CustomApplication) getApplication();
+        application.setImageUrls(mImageUrls);
+    }
+
 }

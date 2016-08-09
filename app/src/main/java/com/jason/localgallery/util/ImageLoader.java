@@ -63,6 +63,9 @@ public class ImageLoader {
         return instance;
     }
 
+    /**
+     * 取消全部加载任务
+     */
     public void cancelAllTask() {
         if (mTasks.size() > 0) {
             for(LIFOTask task : mTasks.values()) {
@@ -73,6 +76,10 @@ public class ImageLoader {
         }
     }
 
+    /** 加载图片的方法
+     * @param startItem 第一个可见的Item
+     * @param endItem 最后一个可见的Item
+     */
     public void loadImages(int startItem, int endItem) {
         for (int i = startItem; i<endItem ; i++) {
             final int index = i;
