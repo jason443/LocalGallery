@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.jason.localgallery.R;
@@ -24,11 +25,12 @@ import java.net.URL;
  * Created by jason on 2016/8/9.
  *
  */
-public class LargeImageFragment extends Fragment {
+public class LargeImageFragment extends Fragment implements View.OnClickListener {
 
     public static final String KEY_URL = "url";
     private String mUrl;
     private ImageView mIvShowImage;
+    private Button mBtBack;
     private LargeBitmapCacheMaker mLargeBitmapCache;
 
     public static LargeImageFragment newInstance(String url) {
@@ -51,6 +53,9 @@ public class LargeImageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.large_image_fragment, container, false);
         mIvShowImage = (ImageView) view.findViewById(R.id.fragment_iv_show);
+        mIvShowImage.setOnClickListener(this);
+        mBtBack = (Button) view.findViewById(R.id.fragment_bt_back);
+        mBtBack.setOnClickListener(this);
         Bitmap bitmap = mLargeBitmapCache.getBitmapFromLruCache(mUrl);
         if (bitmap != null) {
             mIvShowImage.setImageBitmap(bitmap);
@@ -76,7 +81,7 @@ public class LargeImageFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if(connection != null) {
+            if (connection != null) {
                 connection.disconnect();
             }
             if (is != null) {
@@ -90,7 +95,23 @@ public class LargeImageFragment extends Fragment {
         return null;
     }
 
-    class ImageAsyncTack extends AsyncTask<String, Void, Bitmap>{
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fragment_iv_show:
+                if (mBtBack.getVisibility() == View.VISIBLE) {
+                    mBtBack.setVisibility(View.INVISIBLE);
+                } else {
+                    mBtBack.setVisibility(View.VISIBLE);
+                }
+                break;
+            case R.id.fragment_bt_back:
+                getActivity().finish();
+                break;
+        }
+    }
+
+    class ImageAsyncTack extends AsyncTask<String, Void, Bitmap> {
 
         private String url;
 
@@ -102,8 +123,8 @@ public class LargeImageFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if(bitmap != null && url != null) {
-                mLargeBitmapCache.addBitmapToLruCache(url,bitmap);
+            if (bitmap != null && url != null) {
+                mLargeBitmapCache.addBitmapToLruCache(url, bitmap);
                 mIvShowImage.setImageBitmap(bitmap);
             }
         }
